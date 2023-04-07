@@ -86,15 +86,19 @@ app.get("/about", function(req, res){
   res.render("about");
 });
 
-app.post("/delete", function(req,res){
+app.post("/delete", function(req, res) {
+  const checkedItemId = req.body.checkbox;
 
-  const checkItemId = req.body.checkbox;
-  Item.findByIdAndRemove(checkItemId, function(err){
-    if(!err){
-      console.log("Successfully deleted.");
-    }
-  })
-  });
+  Item.findByIdAndRemove(checkedItemId)
+    .then(() => {
+      console.log("Successfully deleted item with id " + checkedItemId);
+      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Error deleting item.");
+    });
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
